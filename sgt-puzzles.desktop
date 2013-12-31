@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Name=Puzzles
+Icon=sgt-puzzles
+Exec=sailfish-qml sgt-puzzles
