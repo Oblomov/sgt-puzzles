@@ -14,7 +14,7 @@ Page {
 	property int nameFontSize
 	property int descFontSize
 
-	visibleDescs: false
+	visibleDescs: true
 	iconSize: Theme.iconSizeLarge
 	columns: { 
 		var fits = Math.floor(width/(2*iconSize));
@@ -29,9 +29,9 @@ Page {
 		id: gridView
 		anchors.fill: parent
 
-		// double width/height with visible descs
 		cellWidth: (width/puzzleList.columns)
-		cellHeight: (iconSize + 2*nameFontSize)*(1 + visibleDescs)
+		// room for the puzzle name below only if no descs
+		cellHeight: iconSize + 2*nameFontSize // *(1 - puzzleList.visibleDescs)
 
 		snapMode: GridView.SnapToRow
 
@@ -69,7 +69,12 @@ Page {
 			}
 
 			onPressAndHold: {
-				console.log(puzzle + " held");
+				pageStack.push(Qt.resolvedUrl("PuzzleDetails.qml"), {
+						iconSize: puzzleList.iconSize,
+						puzzle: puzzle,
+						name: name,
+						desc: desc
+					})
 			}
 
 			// if descriptions are visible, place title + description next to the icon,
@@ -82,7 +87,6 @@ Page {
 				anchors.fill: parent
 				visible: !puzzleList.visibleDescs
 				Image {
-					id: puzzleIcon
 					anchors.horizontalCenter: parent.horizontalCenter
 
 					width: puzzleList.iconSize
@@ -91,8 +95,6 @@ Page {
 				}
 
 				Label {
-					id: puzzleTitle
-
 					anchors.horizontalCenter: parent.horizontalCenter
 
 					font.family: Theme.fontFamily
@@ -101,19 +103,60 @@ Page {
 				}
 			}
 
-			Label {
-				id: puzzleDesc
-				width: bItem.width
-				height: bItem.height
+			Row {
+				anchors.fill: parent
 				visible: puzzleList.visibleDescs
 
-				font.family: Theme.fontFamily
-				font.pixelSize: puzzleList.descFontSize
-				wrapMode: Text.WordWrap
-				// TODO left-aligned icon. an img with style float:left doesn't
-				// work particularly nice
-				text: "<h1>" + name + "</h1>" +
-					"<p>" + desc
+				Image {
+					width: puzzleList.iconSize
+					height: puzzleList.iconSize
+					source: icon
+				}
+
+				Column {
+					width: parent.width - iconSize
+					height: parent.height
+
+					Label {
+						id: puzzleName
+						font.family: Theme.fontFamily
+						font.pixelSize: puzzleList.nameFontSize
+						text: name
+					}
+
+					Label {
+						id: puzzleDesc
+						visible: puzzleList.visibleDescs
+						width: parent.width
+						height: parent.height - puzzleName.contentHeight
+						clip: true
+
+						// stolen and adapted from Silica/Label
+						Item {
+							parent: puzzleDesc.parent
+							x: puzzleDesc.x
+							y: puzzleDesc.y
+							OpacityRampEffect {
+								sourceItem: puzzleDesc
+								enabled: puzzleList.visibleDescs && sourceItem.contentHeight > sourceItem.height
+								direction: OpacityRamp.TopToBottom
+								offset: 0.3
+								slope: 1.2
+								width: sourceItem.width
+								height: sourceItem.height
+								anchors.fill: null
+							}
+						}
+
+
+						font.family: Theme.fontFamily
+						font.pixelSize: puzzleList.descFontSize
+						wrapMode: Text.WordWrap
+						// first paragraph only, cleaned. sometimes hard lines
+						// are respected, sometimes they aren't, strange
+						text: { desc.split(/<p>\n/)[1].replace(/\n/g,' ') }
+					}
+				}
 			}
 		}
 	}
