@@ -5,7 +5,11 @@ CoverBackground {
     Label {
         id: label
         anchors.centerIn: parent
-        text: "SGT Puzzles"
+        text: pageStack.currentPage.title
+        width: parent.width
+        height: contentHeight
+        wrapMode: Text.WordWrap
+        horizontalAlignment: Text.AlignHCenter
     }
 
     CoverActionList {

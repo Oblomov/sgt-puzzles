@@ -10,6 +10,7 @@ Page {
 	property string name
 	property string desc
 	iconSize: Theme.iconSizeLarge
+	property alias title: puzzleDetails.name
 
 	SilicaFlickable {
 		anchors.fill: parent
@@ -17,7 +18,7 @@ Page {
 		Column {
 			anchors.fill: parent
 			PageHeader {
-				title: puzzleDetails.name
+				title: puzzleDetails.title
 			}
 
 			Label {

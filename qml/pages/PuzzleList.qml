@@ -8,6 +8,8 @@ Page {
 
 	allowedOrientations: Orientation.All
 
+	property string title: "Simon Tatham's Portable Puzzles Collection"
+
 	property bool visibleDescs
 	property real iconSize
 	property int columns
@@ -38,7 +40,7 @@ Page {
 		// we want the header to wrap, and this requires accessing _titleItem
 		// even though it's far from ideal 8-/
 		header: PageHeader {
-			title: "Simon Tatham's Portable Puzzles Collection"
+			title: puzzleList.title
 			height: _titleItem.contentHeight
 			_titleItem.wrapMode: Text.WordWrap
 			_titleItem.horizontalAlignment: Text.AlignRight
